@@ -30,6 +30,8 @@ package com.mmumu.rpc.server;
 
 
 import com.mumu.rpc.api.HelloService;
+import com.mumu.rpc.core.registry.DefaultServiceRegistry;
+import com.mumu.rpc.core.registry.ServiceRegistry;
 import com.mumu.rpc.core.server.RpcServer;
 /**
  * @Auther: mumu
@@ -41,10 +43,14 @@ public class TestServer {
 
     public static void main(String[] args) {
         HelloService helloService = new HelloServiceImpl();
-        //实例化服务端socket类
-        RpcServer rpcServer = new RpcServer();
+
+        //默认服务注册
+        ServiceRegistry serviceRegistry = new DefaultServiceRegistry();
         //注册helloService服务
-        rpcServer.register(helloService, 9000);
+        serviceRegistry.register(helloService);
+        //实例化服务端socket类
+        RpcServer rpcServer = new RpcServer(serviceRegistry);
+        rpcServer.start(9000);
     }
 
 }

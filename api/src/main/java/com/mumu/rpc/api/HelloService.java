@@ -30,6 +30,7 @@ package com.mumu.rpc.api;
 
 
 /**
+ * 测试用api的接口
  * @Auther: mumu
  * @Date: 2022-09-14 18:59
  * @Description: com.mumu.rpc.api

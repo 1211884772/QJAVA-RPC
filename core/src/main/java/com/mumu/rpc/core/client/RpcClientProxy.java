@@ -30,7 +30,8 @@ package com.mumu.rpc.core.client;
 
 
 import com.mumu.rpc.common.entity.RpcRequest;
-import com.mumu.rpc.common.entity.RpcResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -45,6 +46,8 @@ import java.util.Arrays;
  * @version:1.0
  */
 public class RpcClientProxy implements InvocationHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(RpcClientProxy.class);
 
     private String host;
     private int port;
@@ -67,7 +70,7 @@ public class RpcClientProxy implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        System.out.println("class:"+proxy.getClass()+" |method:"+method+" |args:"+ Arrays.toString(args));
+        logger.info("调用方法: {} # {} # {} ", method.getDeclaringClass().getName(), method.getName(),Arrays.toString(args));
         //@builder 构建链式访问请求
         RpcRequest rpcRequest = RpcRequest.builder()
                 .interfaceName(method.getDeclaringClass().getName())
@@ -77,6 +80,6 @@ public class RpcClientProxy implements InvocationHandler {
                 .build();
         //发送socket请求
         RpcClient rpcClient = new RpcClient();
-        return ((RpcResponse) rpcClient.sendRequest(rpcRequest, host, port)).getData();
+        return rpcClient.sendRequest(rpcRequest, host, port);
     }
 }

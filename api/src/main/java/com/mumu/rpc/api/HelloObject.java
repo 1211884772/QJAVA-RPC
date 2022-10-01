@@ -33,6 +33,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import java.io.Serializable;
 /**
+ * 测试用api的实体
  * @Auther: mumu
  * @Date: 2022-09-14 18:59
  * @Description: com.mumu.rpc.api
