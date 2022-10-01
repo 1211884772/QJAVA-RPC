@@ -43,9 +43,13 @@ public class TestClient {
 
     public static void main(String[] args) {
         RpcClientProxy proxy = new RpcClientProxy("127.0.0.1", 9000);
-        HelloService helloService = proxy.getProxy(HelloService.class);
+        //要代理的真实对象HelloService.class
+        HelloService proxyHelloService = proxy.getProxy(HelloService.class);
+        //传递的参数
         HelloObject object = new HelloObject(12, "This is a message");
-        String res = helloService.hello(object);
+
+        //代理请求服务端的helloService.hello(object)
+        String res = proxyHelloService.hello(object);
         System.out.println(res);
     }
 

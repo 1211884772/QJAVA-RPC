@@ -48,12 +48,20 @@ public class RpcClient {
 
     private static final Logger logger = LoggerFactory.getLogger(RpcClient.class);
 
+    //发送socket请求
     public Object sendRequest(RpcRequest rpcRequest, String host, int port) {
+        //创建Socket
         try (Socket socket = new Socket(host, port)) {
+            //socket.getInputStream()返回此套接字的输入流。
+            //socket.getOutputStream()返回此套接字的输出流。
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+
+            //writeObject将指定的对象写入ObjectOutputStream。
             objectOutputStream.writeObject(rpcRequest);
+            //flush 刷新流。
             objectOutputStream.flush();
+            //readObject 从ObjectInputStream读取一个对象。
             return objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             logger.error("调用时有错误发生：", e);

@@ -62,16 +62,26 @@ public class WorkerThread implements Runnable {
 
     @Override
     public void run() {
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream())) {
+        //socket.getInputStream()返回此套接字的输入流。
+        //socket.getOutputStream()返回此套接字的输出流。
+        try(ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream())){
+            //readObject 从ObjectInputStream读取一个对象。
             RpcRequest rpcRequest = (RpcRequest) objectInputStream.readObject();
+            rpcRequest.getMethodName();
+            //getClass 返回此 Object的运行时类
+            //getMethod 返回一个 方法对象，它反映此表示的类或接口的指定公共成员方法 类对象。
             Method method = service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParamTypes());
+            //invoke JAX-WS运行时调用此方法来对端点实例执行实际的Web服务调用。
             Object returnObject = method.invoke(service, rpcRequest.getParameters());
+            //writeObject将指定的对象写入ObjectOutputStream。
             objectOutputStream.writeObject(RpcResponse.success(returnObject));
+            //flush 刷新流。
             objectOutputStream.flush();
         } catch (IOException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             logger.error("调用或发送时有错误发生：", e);
         }
     }
+
 
 }

@@ -28,12 +28,6 @@ package com.mumu.rpc.common.entity;
 //
 //
 
-/**
- * @Auther: mumu
- * @Date: 2022-09-14 18:33
- * @Description: com.mumu.rpc.common.entity
- * @version:1.0
- */
 
 
 import lombok.Builder;
@@ -43,8 +37,12 @@ import java.io.Serializable;
 
 /**
  * 消费者向提供者发送的请求对象
- * @author ziyang
+ * @Auther: mumu
+ * @Date: 2022-09-14 18:33
+ * @Description: com.mumu.rpc.common.entity
+ * @version:1.0
  */
+
 @Data
 @Builder
 public class RpcRequest implements Serializable {

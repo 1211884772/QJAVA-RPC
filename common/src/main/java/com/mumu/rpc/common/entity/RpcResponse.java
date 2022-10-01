@@ -29,18 +29,19 @@ package com.mumu.rpc.common.entity;
 //
 
 
-/**
- * @Auther: mumu
- * @Date: 2022-09-14 18:33
- * @Description: com.mumu.rpc.common.entity
- * @version:1.0
- */
+
 
 import com.mumu.rpc.common.enumeration.ResponseCode;
 import lombok.Data;
 
 import java.io.Serializable;
-
+/**
+ * 响应序列化
+ * @Auther: mumu
+ * @Date: 2022-09-14 18:33
+ * @Description: com.mumu.rpc.common.entity
+ * @version:1.0
+ */
 @Data
 public class RpcResponse<T> implements Serializable {
 
@@ -59,6 +60,12 @@ public class RpcResponse<T> implements Serializable {
      */
     private T data;
 
+    /**
+     * 成功响应
+     * @param data 数据
+     * @param <T>
+     * @return
+     */
     public static <T> RpcResponse<T> success(T data) {
         RpcResponse<T> response = new RpcResponse<>();
         response.setStatusCode(ResponseCode.SUCCESS.getCode());
@@ -66,6 +73,12 @@ public class RpcResponse<T> implements Serializable {
         return response;
     }
 
+    /**
+     * 失败响应
+     * @param code 状态码
+     * @param <T>
+     * @return
+     */
     public static <T> RpcResponse<T> fail(ResponseCode code) {
         RpcResponse<T> response = new RpcResponse<>();
         response.setStatusCode(code.getCode());

@@ -33,6 +33,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
+ * 响应code枚举类
  * @Auther: mumu
  * @Date: 2022-09-14 18:42
  * @Description: com.mumu.rpc.common.enumeration

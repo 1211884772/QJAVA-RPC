@@ -40,8 +40,10 @@ import com.mumu.rpc.core.server.RpcServer;
 public class TestServer {
 
     public static void main(String[] args) {
-        HelloService helloService = new com.mmumu.rpc.server.HelloServiceImpl();
+        HelloService helloService = new HelloServiceImpl();
+        //实例化服务端socket类
         RpcServer rpcServer = new RpcServer();
+        //注册helloService服务
         rpcServer.register(helloService, 9000);
     }
 
