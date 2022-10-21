@@ -32,7 +32,8 @@ package com.mumu.rpc.core.netty.server;
 import com.mumu.rpc.core.RpcServer;
 import com.mumu.rpc.core.codec.CommonDecoder;
 import com.mumu.rpc.core.codec.CommonEncoder;
-import com.mumu.rpc.core.serializer.JsonSerializer;
+import com.mumu.rpc.core.serializer.CommonSerializer;
+import com.mumu.rpc.core.serializer.HessianSerializer;
 import com.mumu.rpc.core.serializer.KryoSerializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -53,7 +54,7 @@ import org.slf4j.LoggerFactory;
  */
 public class NettyServer implements RpcServer {
     private static final Logger logger = LoggerFactory.getLogger(NettyServer.class);
-
+    private CommonSerializer serializer;
     @Override
     public void start(int port) {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
@@ -71,7 +72,7 @@ public class NettyServer implements RpcServer {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
-                            pipeline.addLast(new CommonEncoder(new KryoSerializer()));
+                            pipeline.addLast(new CommonEncoder(serializer));
                             pipeline.addLast(new CommonDecoder());
                             pipeline.addLast(new NettyServerHandler());
                         }
@@ -85,5 +86,10 @@ public class NettyServer implements RpcServer {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
+    }
+
+    @Override
+    public void setSerializer(CommonSerializer serializer) {
+        this.serializer = serializer;
     }
 }

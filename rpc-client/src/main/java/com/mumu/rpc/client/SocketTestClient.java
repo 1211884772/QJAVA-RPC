@@ -32,6 +32,7 @@ package com.mumu.rpc.client;
 import com.mumu.rpc.api.HelloObject;
 import com.mumu.rpc.api.HelloService;
 import com.mumu.rpc.core.RpcClientProxy;
+import com.mumu.rpc.core.serializer.KryoSerializer;
 import com.mumu.rpc.core.socket.client.SocketClient;
 
 /**
@@ -44,6 +45,7 @@ public class SocketTestClient {
 
     public static void main(String[] args) {
         SocketClient client = new SocketClient("127.0.0.1", 9000);
+        client.setSerializer(new KryoSerializer());
         RpcClientProxy proxy = new RpcClientProxy(client);
         //要代理的真实对象HelloService.class
         HelloService proxyHelloService = proxy.getProxy(HelloService.class);

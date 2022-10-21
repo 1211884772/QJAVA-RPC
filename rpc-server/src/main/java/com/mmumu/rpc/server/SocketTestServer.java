@@ -32,6 +32,7 @@ package com.mmumu.rpc.server;
 import com.mumu.rpc.api.HelloService;
 import com.mumu.rpc.core.registry.DefaultServiceRegistry;
 import com.mumu.rpc.core.registry.ServiceRegistry;
+import com.mumu.rpc.core.serializer.HessianSerializer;
 import com.mumu.rpc.core.server.RpcServer;
 import com.mumu.rpc.core.socket.server.SocketServer;
 
@@ -52,6 +53,7 @@ public class SocketTestServer {
         serviceRegistry.register(helloService);
         //实例化服务端socket类
         SocketServer socketServer = new SocketServer(serviceRegistry);
+        socketServer.setSerializer(new HessianSerializer());
         socketServer.start(9000);
     }
 

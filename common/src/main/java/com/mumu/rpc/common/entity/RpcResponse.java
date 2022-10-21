@@ -60,6 +60,9 @@ public class RpcResponse<T> implements Serializable {
      */
     private T data;
 
+    public RpcResponse() {
+    }
+
     /**
      * 成功响应
      * @param data 数据

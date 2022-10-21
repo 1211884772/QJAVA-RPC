@@ -32,6 +32,7 @@ package com.mumu.rpc.core;
 
 
 import com.mumu.rpc.common.entity.RpcRequest;
+import com.mumu.rpc.core.serializer.CommonSerializer;
 
 /**
  * 客户端类通用接口
@@ -43,5 +44,5 @@ import com.mumu.rpc.common.entity.RpcRequest;
 public interface RpcClient {
 
     Object sendRequest(RpcRequest rpcRequest);
-
+    void setSerializer(CommonSerializer serializer);
 }

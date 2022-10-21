@@ -46,7 +46,7 @@ import java.lang.reflect.Method;
  * @version:1.0
  */
 public class RequestHandler {
-    private static final Logger logger = LoggerFactory.getLogger(com.mumu.rpc.core.server.RequestHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
 
     public Object handle(RpcRequest rpcRequest, Object service) {

@@ -29,6 +29,8 @@ package com.mumu.rpc.core;
 //
 
 
+import com.mumu.rpc.core.serializer.CommonSerializer;
+
 /**
  * 服务器类通用接口
  * @Auther: mumu
@@ -40,5 +42,6 @@ package com.mumu.rpc.core;
 public interface RpcServer {
 
     void start(int port);
+    void setSerializer(CommonSerializer serializer);
 
 }

@@ -35,12 +35,13 @@ import com.mumu.rpc.common.entity.RpcRequest;
 import com.mumu.rpc.common.entity.RpcResponse;
 import com.mumu.rpc.core.RequestHandler;
 import com.mumu.rpc.core.registry.ServiceRegistry;
+import com.mumu.rpc.core.serializer.CommonSerializer;
+import com.mumu.rpc.core.socket.util.ObjectReader;
+import com.mumu.rpc.core.socket.util.ObjectWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 
 /**
@@ -56,29 +57,30 @@ public class RequestHandlerThread implements Runnable {
     private Socket socket;
     private RequestHandler requestHandler;
     private ServiceRegistry serviceRegistry;
+    private CommonSerializer serializer;
 
-    public RequestHandlerThread(Socket socket, RequestHandler requestHandler, ServiceRegistry serviceRegistry) {
+    public RequestHandlerThread(Socket socket, RequestHandler requestHandler, ServiceRegistry serviceRegistry, CommonSerializer serializer) {
         this.socket = socket;
         this.requestHandler = requestHandler;
         this.serviceRegistry = serviceRegistry;
+        this.serializer = serializer;
     }
 
     @Override
     public void run() {
         //socket.getInputStream()返回此套接字的输入流。
         //socket.getOutputStream()返回此套接字的输出流。
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream())) {
+        try (InputStream inputStream = socket.getInputStream();
+             OutputStream outputStream = socket.getOutputStream()) {
             //readObject 从ObjectInputStream读取一个对象。
-            RpcRequest rpcRequest = (RpcRequest) objectInputStream.readObject();
+            RpcRequest rpcRequest = (RpcRequest) ObjectReader.readObject(inputStream);
             String interfaceName = rpcRequest.getInterfaceName();
             Object service = serviceRegistry.getService(interfaceName);
             Object result = requestHandler.handle(rpcRequest, service);
             //writeObject将指定的对象写入ObjectOutputStream。
-            objectOutputStream.writeObject(RpcResponse.success(result));
-            //flush 刷新流。
-            objectOutputStream.flush();
-        } catch (IOException | ClassNotFoundException e) {
+            RpcResponse<Object> response = RpcResponse.success(result);
+            ObjectWriter.writeObject(outputStream, response, serializer);
+        } catch (IOException e) {
             logger.error("调用或发送时有错误发生：", e);
         }
     }
