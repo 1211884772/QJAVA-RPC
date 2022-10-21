@@ -33,6 +33,7 @@ package com.mumu.rpc.common.entity;
 
 import com.mumu.rpc.common.enumeration.ResponseCode;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 /**
@@ -43,6 +44,7 @@ import java.io.Serializable;
  * @version:1.0
  */
 @Data
+@NoArgsConstructor
 public class RpcResponse<T> implements Serializable {
     /**
      * 响应对应的请求号
@@ -63,8 +65,6 @@ public class RpcResponse<T> implements Serializable {
      */
     private T data;
 
-    public RpcResponse() {
-    }
 
     /**
      * 成功响应
