@@ -50,10 +50,9 @@ public class DefaultServiceRegistry implements ServiceRegistry {
     private static final Logger logger = LoggerFactory.getLogger(DefaultServiceRegistry.class);
 
     //创建一个新的，空的地图与默认的初始表大小（16）。
-    private final Map<String, Object> serviceMap = new ConcurrentHashMap<>();
+    private static final Map<String, Object> serviceMap = new ConcurrentHashMap<>();
     //创建一个新的Set支持的ConcurrentHashMap从给定的类型到Boolean.TRUE 。
-    private final Set<String> registeredService = ConcurrentHashMap.newKeySet();
-
+    private static final Set<String> registeredService = ConcurrentHashMap.newKeySet();
     /**
      * 注册服务
      * @param service 待注册的服务实体

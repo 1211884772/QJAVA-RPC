@@ -36,7 +36,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 /**
- * 响应序列化
+ * 提供者执行完成或出错后向消费者返回的结果对象
  * @Auther: mumu
  * @Date: 2022-09-14 18:33
  * @Description: com.mumu.rpc.common.entity

@@ -1,4 +1,4 @@
-package com.mumu.rpc.common.enumeration;
+package com.mumu.rpc.core.serializer;
 //
 //                       .::::.
 //                     .::::::::.
@@ -29,30 +29,30 @@ package com.mumu.rpc.common.enumeration;
 //
 
 
-
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
- * RPC调用过程中的错误
+ * 通用的序列化反序列化接口
  * @Auther: mumu
- * @Date: 2022-10-01 17:48
- * @Description: com.mumu.rpc.common.enumeration
+ * @Date: 2022-10-21 11:57
+ * @Description: com.mumu.rpc.core.serializer
  * @version:1.0
  */
-@AllArgsConstructor
-@Getter
-public enum RpcError {
+public interface CommonSerializer {
+    byte[] serialize(Object obj);
 
-    SERVICE_INVOCATION_FAILURE("服务调用出现失败"),
-    SERVICE_NOT_FOUND("找不到对应的服务"),
-    SERVICE_NOT_IMPLEMENT_ANY_INTERFACE("注册的服务未实现接口"),
-    UNKNOWN_PROTOCOL("不识别的协议包"),
-    UNKNOWN_SERIALIZER("不识别的（反）序列化器"),
-    UNKNOWN_PACKAGE_TYPE("不识别的数据包类型");
+    Object deserialize(byte[] bytes, Class<?> clazz);
 
+    int getCode();
 
-    private final String message;
-
+    static CommonSerializer getByCode(int code) {
+        switch (code) {
+            case 0:
+                return new KryoSerializer();
+            case 1:
+                return new JsonSerializer();
+            case 2:
+                return new HessianSerializer();
+            default:
+                return null;
+        }
+    }
 }

@@ -1,4 +1,4 @@
-package com.mumu.rpc.core.server;
+package com.mumu.rpc.core.socket.server;
 //
 //                       .::::.
 //                     .::::::::.
@@ -29,6 +29,8 @@ package com.mumu.rpc.core.server;
 //
 
 
+import com.mumu.rpc.core.RequestHandler;
+import com.mumu.rpc.core.RpcServer;
 import com.mumu.rpc.core.registry.ServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,9 +46,9 @@ import java.util.concurrent.*;
  * @Description: com.mumu.rpc.core.server
  * @version:1.0
  */
-public class RpcServer {
+public class SocketServer implements RpcServer {
 
-    private static final Logger logger = LoggerFactory.getLogger(RpcServer.class);
+    private static final Logger logger = LoggerFactory.getLogger(SocketServer.class);
 
 
     private static final int CORE_POOL_SIZE = 5;//核心线程数
@@ -58,7 +60,7 @@ public class RpcServer {
     private final ServiceRegistry serviceRegistry;
     //TimeUnit.SECONDS 时间单位
 
-    public RpcServer(ServiceRegistry serviceRegistry) {
+    public SocketServer(ServiceRegistry serviceRegistry) {
         this.serviceRegistry = serviceRegistry;
         //工作队列
         BlockingQueue<Runnable> workingQueue = new ArrayBlockingQueue<>(BLOCKING_QUEUE_CAPACITY);
@@ -67,6 +69,7 @@ public class RpcServer {
         threadPool = new ThreadPoolExecutor(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_TIME, TimeUnit.SECONDS, workingQueue, threadFactory);
     }
 
+    @Override
     public void start(int port) {
         //创建一个具有指定端口的服务器，侦听backlog和本地IP地址绑定
         try (ServerSocket serverSocket = new ServerSocket(port)) {

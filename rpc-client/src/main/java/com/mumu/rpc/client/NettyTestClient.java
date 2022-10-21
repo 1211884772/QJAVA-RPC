@@ -1,4 +1,4 @@
-package com.mumu.rpc.common.enumeration;
+package com.mumu.rpc.client;
 //
 //                       .::::.
 //                     .::::::::.
@@ -29,30 +29,27 @@ package com.mumu.rpc.common.enumeration;
 //
 
 
-
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import com.mumu.rpc.api.HelloObject;
+import com.mumu.rpc.api.HelloService;
+import com.mumu.rpc.core.RpcClient;
+import com.mumu.rpc.core.RpcClientProxy;
+import com.mumu.rpc.core.netty.client.NettyClient;
 
 /**
- * RPC调用过程中的错误
+ * 测试用Netty消费者
  * @Auther: mumu
- * @Date: 2022-10-01 17:48
- * @Description: com.mumu.rpc.common.enumeration
+ * @Date: 2022-10-21 12:08
+ * @Description: com.mumu.rpc.client
  * @version:1.0
  */
-@AllArgsConstructor
-@Getter
-public enum RpcError {
+public class NettyTestClient {
+    public static void main(String[] args) {
+        RpcClient client = new NettyClient("127.0.0.1", 9999);
+        RpcClientProxy rpcClientProxy = new RpcClientProxy(client);
+        HelloService helloService = rpcClientProxy.getProxy(HelloService.class);
+        HelloObject object = new HelloObject(12, "This is a message");
+        String res = helloService.hello(object);
+        System.out.println(res);
 
-    SERVICE_INVOCATION_FAILURE("服务调用出现失败"),
-    SERVICE_NOT_FOUND("找不到对应的服务"),
-    SERVICE_NOT_IMPLEMENT_ANY_INTERFACE("注册的服务未实现接口"),
-    UNKNOWN_PROTOCOL("不识别的协议包"),
-    UNKNOWN_SERIALIZER("不识别的（反）序列化器"),
-    UNKNOWN_PACKAGE_TYPE("不识别的数据包类型");
-
-
-    private final String message;
-
+    }
 }

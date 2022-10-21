@@ -1,4 +1,4 @@
-package com.mumu.rpc.common.enumeration;
+package com.mumu.rpc.core;
 //
 //                       .::::.
 //                     .::::::::.
@@ -31,28 +31,17 @@ package com.mumu.rpc.common.enumeration;
 
 
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import com.mumu.rpc.common.entity.RpcRequest;
 
 /**
- * RPC调用过程中的错误
+ * 客户端类通用接口
  * @Auther: mumu
- * @Date: 2022-10-01 17:48
- * @Description: com.mumu.rpc.common.enumeration
+ * @Date: 2022-10-21 11:30
+ * @Description: com.mumu.rpc.core
  * @version:1.0
  */
-@AllArgsConstructor
-@Getter
-public enum RpcError {
+public interface RpcClient {
 
-    SERVICE_INVOCATION_FAILURE("服务调用出现失败"),
-    SERVICE_NOT_FOUND("找不到对应的服务"),
-    SERVICE_NOT_IMPLEMENT_ANY_INTERFACE("注册的服务未实现接口"),
-    UNKNOWN_PROTOCOL("不识别的协议包"),
-    UNKNOWN_SERIALIZER("不识别的（反）序列化器"),
-    UNKNOWN_PACKAGE_TYPE("不识别的数据包类型");
-
-
-    private final String message;
+    Object sendRequest(RpcRequest rpcRequest);
 
 }

@@ -1,4 +1,4 @@
-package com.mumu.rpc.client;
+package com.mmumu.rpc.server;
 //
 //                       .::::.
 //                     .::::::::.
@@ -29,28 +29,30 @@ package com.mumu.rpc.client;
 //
 
 
-import com.mumu.rpc.api.HelloObject;
 import com.mumu.rpc.api.HelloService;
-import com.mumu.rpc.core.client.RpcClientProxy;
+import com.mumu.rpc.core.registry.DefaultServiceRegistry;
+import com.mumu.rpc.core.registry.ServiceRegistry;
+import com.mumu.rpc.core.server.RpcServer;
+import com.mumu.rpc.core.socket.server.SocketServer;
 
 /**
  * @Auther: mumu
- * @Date: 2022-09-14 19:19
- * @Description: com.mumu.rpc.client
+ * @Date: 2022-09-14 19:08
+ * @Description: com.mmumu.rpc.server
  * @version:1.0
  */
-public class TestClient {
+public class SocketTestServer {
 
     public static void main(String[] args) {
-        RpcClientProxy proxy = new RpcClientProxy("127.0.0.1", 9000);
-        //要代理的真实对象HelloService.class
-        HelloService proxyHelloService = proxy.getProxy(HelloService.class);
-        //传递的参数
-        HelloObject object = new HelloObject(12, "This is a message");
+        HelloService helloService = new HelloServiceImpl();
 
-        //代理请求服务端的helloService.hello(object)
-        String res = proxyHelloService.hello(object);
-        System.out.println(res);
+        //默认服务注册
+        ServiceRegistry serviceRegistry = new DefaultServiceRegistry();
+        //注册helloService服务
+        serviceRegistry.register(helloService);
+        //实例化服务端socket类
+        SocketServer socketServer = new SocketServer(serviceRegistry);
+        socketServer.start(9000);
     }
 
 }

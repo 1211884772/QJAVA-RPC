@@ -1,4 +1,4 @@
-package com.mumu.rpc.core.client;
+package com.mumu.rpc.core.socket.client;
 //
 //                       .::::.
 //                     .::::::::.
@@ -34,6 +34,7 @@ import com.mumu.rpc.common.entity.RpcResponse;
 import com.mumu.rpc.common.enumeration.ResponseCode;
 import com.mumu.rpc.common.enumeration.RpcError;
 import com.mumu.rpc.common.exception.RpcException;
+import com.mumu.rpc.core.RpcClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,17 +44,26 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
+ * Socket方式远程方法调用的消费者（客户端）
  * @Auther: mumu
  * @Date: 2022-09-14 18:56
  * @Description: com.mumu.rpc.core.client
  * @version:1.0
  */
-public class RpcClient {
+public class SocketClient implements RpcClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(RpcClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(SocketClient.class);
 
+    private final String host;
+    private final int port;
+
+    public SocketClient(String host, int port) {
+        this.host = host;
+        this.port = port;
+    }
     //发送socket请求
-    public Object sendRequest(RpcRequest rpcRequest, String host, int port) {
+    @Override
+    public Object sendRequest(RpcRequest rpcRequest) {
         //创建Socket
         try (Socket socket = new Socket(host, port)) {
             //socket.getInputStream()返回此套接字的输入流。
