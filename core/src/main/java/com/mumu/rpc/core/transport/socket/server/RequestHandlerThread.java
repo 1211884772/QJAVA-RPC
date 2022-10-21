@@ -1,4 +1,4 @@
-package com.mumu.rpc.core.socket.server;
+package com.mumu.rpc.core.transport.socket.server;
 //
 //                       .::::.
 //                     .::::::::.
@@ -33,11 +33,11 @@ package com.mumu.rpc.core.socket.server;
 
 import com.mumu.rpc.common.entity.RpcRequest;
 import com.mumu.rpc.common.entity.RpcResponse;
-import com.mumu.rpc.core.RequestHandler;
+import com.mumu.rpc.core.handler.RequestHandler;
 import com.mumu.rpc.core.registry.ServiceRegistry;
 import com.mumu.rpc.core.serializer.CommonSerializer;
-import com.mumu.rpc.core.socket.util.ObjectReader;
-import com.mumu.rpc.core.socket.util.ObjectWriter;
+import com.mumu.rpc.core.transport.socket.util.ObjectReader;
+import com.mumu.rpc.core.transport.socket.util.ObjectWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,8 +75,7 @@ public class RequestHandlerThread implements Runnable {
             //readObject 从ObjectInputStream读取一个对象。
             RpcRequest rpcRequest = (RpcRequest) ObjectReader.readObject(inputStream);
             String interfaceName = rpcRequest.getInterfaceName();
-            Object service = serviceRegistry.getService(interfaceName);
-            Object result = requestHandler.handle(rpcRequest, service);
+            Object result = requestHandler.handle(rpcRequest);
 
             RpcResponse<Object> response = RpcResponse.success(result, rpcRequest.getRequestId());
             //writeObject将指定的对象写入ObjectOutputStream。

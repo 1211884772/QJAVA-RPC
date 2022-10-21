@@ -33,7 +33,7 @@ import com.mumu.rpc.api.HelloService;
 import com.mumu.rpc.core.registry.DefaultServiceRegistry;
 import com.mumu.rpc.core.registry.ServiceRegistry;
 import com.mumu.rpc.core.serializer.HessianSerializer;
-import com.mumu.rpc.core.socket.server.SocketServer;
+import com.mumu.rpc.core.transport.socket.server.SocketServer;
 
 /**
  * @Auther: mumu
@@ -46,14 +46,11 @@ public class SocketTestServer {
     public static void main(String[] args) {
         HelloService helloService = new HelloServiceImpl();
 
-        //默认服务注册
-        ServiceRegistry serviceRegistry = new DefaultServiceRegistry();
+        //默认服务注册//实例化服务端socket类
+        SocketServer socketServer = new SocketServer("127.0.0.1", 9998);
         //注册helloService服务
-        serviceRegistry.register(helloService);
-        //实例化服务端socket类
-        SocketServer socketServer = new SocketServer(serviceRegistry);
         socketServer.setSerializer(new HessianSerializer());
-        socketServer.start(9999);
+        socketServer.publishService(helloService, HelloService.class);
     }
 
 }

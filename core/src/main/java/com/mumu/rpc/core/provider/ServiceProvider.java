@@ -1,4 +1,4 @@
-package com.mumu.rpc.client;
+package com.mumu.rpc.core.provider;
 //
 //                       .::::.
 //                     .::::::::.
@@ -29,29 +29,18 @@ package com.mumu.rpc.client;
 //
 
 
-import com.mumu.rpc.api.HelloObject;
-import com.mumu.rpc.api.HelloService;
-import com.mumu.rpc.core.transport.RpcClient;
-import com.mumu.rpc.core.transport.RpcClientProxy;
-import com.mumu.rpc.core.transport.netty.client.NettyClient;
-import com.mumu.rpc.core.serializer.ProtobufSerializer;
-
 /**
- * 测试用Netty消费者
+ * 保存和提供服务实例对象
  * @Auther: mumu
- * @Date: 2022-10-21 12:08
- * @Description: com.mumu.rpc.client
+ * @Date: 2022-10-21 18:23
+ * @Description: com.mumu.rpc.core.provider
  * @version:1.0
  */
-public class NettyTestClient {
-    public static void main(String[] args) {
-        RpcClient client = new NettyClient();
-        client.setSerializer(new ProtobufSerializer());
-        RpcClientProxy rpcClientProxy = new RpcClientProxy(client);
-        HelloService helloService = rpcClientProxy.getProxy(HelloService.class);
-        HelloObject object = new HelloObject(12, "This is a message");
-        String res = helloService.hello(object);
-        System.out.println(res);
+public interface ServiceProvider {
 
-    }
+
+    <T> void addServiceProvider(T service);
+
+    Object getServiceProvider(String serviceName);
+
 }

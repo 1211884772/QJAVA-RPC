@@ -1,4 +1,4 @@
-package com.mumu.rpc.core;
+package com.mumu.rpc.core.transport;
 //
 //                       .::::.
 //                     .::::::::.
@@ -41,7 +41,8 @@ import com.mumu.rpc.core.serializer.CommonSerializer;
 
 public interface RpcServer {
 
-    void start(int port);
+    void start();
     void setSerializer(CommonSerializer serializer);
+    <T> void publishService(Object service, Class<T> serviceClass);
 
 }

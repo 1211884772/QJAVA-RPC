@@ -1,4 +1,4 @@
-package com.mumu.rpc.core.socket.client;
+package com.mumu.rpc.core.transport.socket.client;
 //
 //                       .::::.
 //                     .::::::::.
@@ -35,14 +35,17 @@ import com.mumu.rpc.common.enumeration.ResponseCode;
 import com.mumu.rpc.common.enumeration.RpcError;
 import com.mumu.rpc.common.exception.RpcException;
 import com.mumu.rpc.common.util.RpcMessageChecker;
-import com.mumu.rpc.core.RpcClient;
+import com.mumu.rpc.core.registry.NacosServiceRegistry;
+import com.mumu.rpc.core.registry.ServiceRegistry;
+import com.mumu.rpc.core.transport.RpcClient;
 import com.mumu.rpc.core.serializer.CommonSerializer;
-import com.mumu.rpc.core.socket.util.ObjectReader;
-import com.mumu.rpc.core.socket.util.ObjectWriter;
+import com.mumu.rpc.core.transport.socket.util.ObjectReader;
+import com.mumu.rpc.core.transport.socket.util.ObjectWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 /**
@@ -56,12 +59,10 @@ public class SocketClient implements RpcClient {
 
     private static final Logger logger = LoggerFactory.getLogger(SocketClient.class);
 
-    private final String host;
-    private final int port;
+    private final ServiceRegistry serviceRegistry;
     private CommonSerializer serializer;
-    public SocketClient(String host, int port) {
-        this.host = host;
-        this.port = port;
+    public SocketClient() {
+        this.serviceRegistry = new NacosServiceRegistry();
     }
     //发送socket请求
     @Override
@@ -71,7 +72,9 @@ public class SocketClient implements RpcClient {
             throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
         }
         //创建Socket
-        try (Socket socket = new Socket(host, port)) {
+        InetSocketAddress inetSocketAddress = serviceRegistry.lookupService(rpcRequest.getInterfaceName());
+        try (Socket socket = new Socket()) {
+            socket.connect(inetSocketAddress);
             //socket.getInputStream()返回此套接字的输入流。
             //socket.getOutputStream()返回此套接字的输出流。
             OutputStream outputStream = socket.getOutputStream();

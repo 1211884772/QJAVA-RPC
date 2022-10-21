@@ -1,4 +1,4 @@
-package com.mumu.rpc.core;
+package com.mumu.rpc.core.handler;
 //
 //                       .::::.
 //                     .::::::::.
@@ -32,6 +32,9 @@ package com.mumu.rpc.core;
 import com.mumu.rpc.common.entity.RpcRequest;
 import com.mumu.rpc.common.entity.RpcResponse;
 import com.mumu.rpc.common.enumeration.ResponseCode;
+import com.mumu.rpc.core.provider.ServiceProvider;
+import com.mumu.rpc.core.provider.ServiceProviderImpl;
+import com.mumu.rpc.core.registry.ServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,10 +50,15 @@ import java.lang.reflect.Method;
  */
 public class RequestHandler {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final ServiceProvider serviceProvider;
 
+    static {
+        serviceProvider = new ServiceProviderImpl();
+    }
 
-    public Object handle(RpcRequest rpcRequest, Object service) {
+    public Object handle(RpcRequest rpcRequest) {
         Object result = null;
+        Object service = serviceProvider.getServiceProvider(rpcRequest.getInterfaceName());
         try {
             //代理调用方法
             result = invokeTargetMethod(rpcRequest, service);

@@ -1,4 +1,4 @@
-package com.mumu.rpc.core.socket.util;
+package com.mumu.rpc.core.transport.socket.util;
 //
 //                       .::::.
 //                     .::::::::.

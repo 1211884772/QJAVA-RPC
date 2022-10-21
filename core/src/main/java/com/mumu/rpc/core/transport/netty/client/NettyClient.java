@@ -1,4 +1,4 @@
-package com.mumu.rpc.core.netty.client;
+package com.mumu.rpc.core.transport.netty.client;
 //
 //                       .::::.
 //                     .::::::::.
@@ -34,16 +34,13 @@ import com.mumu.rpc.common.entity.RpcResponse;
 import com.mumu.rpc.common.enumeration.RpcError;
 import com.mumu.rpc.common.exception.RpcException;
 import com.mumu.rpc.common.util.RpcMessageChecker;
-import com.mumu.rpc.core.RpcClient;
-import com.mumu.rpc.core.codec.CommonDecoder;
-import com.mumu.rpc.core.codec.CommonEncoder;
+import com.mumu.rpc.core.registry.NacosServiceRegistry;
+import com.mumu.rpc.core.registry.ServiceRegistry;
+import com.mumu.rpc.core.transport.RpcClient;
 import com.mumu.rpc.core.serializer.CommonSerializer;
-import com.mumu.rpc.core.serializer.JsonSerializer;
-import com.mumu.rpc.core.serializer.KryoSerializer;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.AttributeKey;
 import org.slf4j.Logger;
@@ -65,6 +62,7 @@ public class NettyClient implements RpcClient {
 
 
     private static final Bootstrap bootstrap;
+    private final ServiceRegistry serviceRegistry;
     private CommonSerializer serializer;
 
     static {
@@ -78,9 +76,8 @@ public class NettyClient implements RpcClient {
     private String host;
     private int port;
 
-    public NettyClient(String host, int port) {
-        this.host = host;
-        this.port = port;
+    public NettyClient() {
+        this.serviceRegistry = new NacosServiceRegistry();
     }
     @Override
     public Object sendRequest(RpcRequest rpcRequest) {
@@ -90,8 +87,8 @@ public class NettyClient implements RpcClient {
         }
         AtomicReference<Object> result = new AtomicReference<>(null);
         try {
-
-            Channel channel = ChannelProvider.get(new InetSocketAddress(host, port), serializer);
+            InetSocketAddress inetSocketAddress = serviceRegistry.lookupService(rpcRequest.getInterfaceName());
+            Channel channel = ChannelProvider.get(inetSocketAddress, serializer);
             if(channel.isActive()) {
                 channel.writeAndFlush(rpcRequest).addListener(future1 -> {
                     if(future1.isSuccess()) {
