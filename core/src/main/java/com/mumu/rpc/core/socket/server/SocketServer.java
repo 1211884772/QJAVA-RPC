@@ -31,6 +31,7 @@ package com.mumu.rpc.core.socket.server;
 
 import com.mumu.rpc.common.enumeration.RpcError;
 import com.mumu.rpc.common.exception.RpcException;
+import com.mumu.rpc.common.util.ThreadPoolFactory;
 import com.mumu.rpc.core.RequestHandler;
 import com.mumu.rpc.core.RpcServer;
 import com.mumu.rpc.core.registry.ServiceRegistry;
@@ -53,11 +54,6 @@ public class SocketServer implements RpcServer {
 
     private static final Logger logger = LoggerFactory.getLogger(SocketServer.class);
 
-
-    private static final int CORE_POOL_SIZE = 5;//核心线程数
-    private static final int MAXIMUM_POOL_SIZE = 50;//最大线程数
-    private static final int KEEP_ALIVE_TIME = 60;//线程空闲时间
-    private static final int BLOCKING_QUEUE_CAPACITY = 100;//任务队列大小
     private final ExecutorService threadPool;//线程池
     private final ServiceRegistry serviceRegistry;
     private CommonSerializer serializer;
@@ -66,11 +62,7 @@ public class SocketServer implements RpcServer {
 
     public SocketServer(ServiceRegistry serviceRegistry) {
         this.serviceRegistry = serviceRegistry;
-        //工作队列
-        BlockingQueue<Runnable> workingQueue = new ArrayBlockingQueue<>(BLOCKING_QUEUE_CAPACITY);
-        ThreadFactory threadFactory = Executors.defaultThreadFactory();
-        //线程池
-        threadPool = new ThreadPoolExecutor(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_TIME, TimeUnit.SECONDS, workingQueue, threadFactory);
+        threadPool = ThreadPoolFactory.createDefaultThreadPool("socket-rpc-server");
     }
 
     @Override
