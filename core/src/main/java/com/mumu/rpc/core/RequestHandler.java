@@ -70,7 +70,7 @@ public class RequestHandler {
             //getMethod 返回一个 方法对象，它反映此表示的类或接口的指定公共成员方法 类对象。
             method = service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParamTypes());
         } catch (NoSuchMethodException e) {
-            return RpcResponse.fail(ResponseCode.METHOD_NOT_FOUND);
+            return RpcResponse.fail(ResponseCode.METHOD_NOT_FOUND, rpcRequest.getRequestId());
         }
         //invoke JAX-WS运行时调用此方法来对端点实例执行实际的Web服务调用。
         return method.invoke(service, rpcRequest.getParameters());

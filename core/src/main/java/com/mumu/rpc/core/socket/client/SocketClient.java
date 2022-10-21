@@ -34,6 +34,7 @@ import com.mumu.rpc.common.entity.RpcResponse;
 import com.mumu.rpc.common.enumeration.ResponseCode;
 import com.mumu.rpc.common.enumeration.RpcError;
 import com.mumu.rpc.common.exception.RpcException;
+import com.mumu.rpc.common.util.RpcMessageChecker;
 import com.mumu.rpc.core.RpcClient;
 import com.mumu.rpc.core.serializer.CommonSerializer;
 import com.mumu.rpc.core.socket.util.ObjectReader;
@@ -89,6 +90,7 @@ public class SocketClient implements RpcClient {
                 logger.error("调用服务失败, service: {}, response:{}", rpcRequest.getInterfaceName(), rpcResponse);
                 throw new RpcException(RpcError.SERVICE_INVOCATION_FAILURE, " service:" + rpcRequest.getInterfaceName());
             }
+            RpcMessageChecker.check(rpcRequest, rpcResponse);
             return rpcResponse.getData();
         } catch (IOException e) {
             logger.error("调用时有错误发生：", e);

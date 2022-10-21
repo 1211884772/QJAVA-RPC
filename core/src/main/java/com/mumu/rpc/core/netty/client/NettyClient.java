@@ -33,6 +33,7 @@ import com.mumu.rpc.common.entity.RpcRequest;
 import com.mumu.rpc.common.entity.RpcResponse;
 import com.mumu.rpc.common.enumeration.RpcError;
 import com.mumu.rpc.common.exception.RpcException;
+import com.mumu.rpc.common.util.RpcMessageChecker;
 import com.mumu.rpc.core.RpcClient;
 import com.mumu.rpc.core.codec.CommonDecoder;
 import com.mumu.rpc.core.codec.CommonEncoder;
@@ -107,8 +108,9 @@ public class NettyClient implements RpcClient {
                     }
                 });
                 channel.closeFuture().sync();
-                AttributeKey<RpcResponse> key = AttributeKey.valueOf("rpcResponse");
+                AttributeKey<RpcResponse> key = AttributeKey.valueOf("rpcResponse" + rpcRequest.getRequestId());
                 RpcResponse rpcResponse = channel.attr(key).get();
+                RpcMessageChecker.check(rpcRequest, rpcResponse);
                 return rpcResponse.getData();
             }
 
