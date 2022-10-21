@@ -33,7 +33,6 @@ import com.mumu.rpc.api.HelloService;
 import com.mumu.rpc.core.netty.server.NettyServer;
 import com.mumu.rpc.core.registry.DefaultServiceRegistry;
 import com.mumu.rpc.core.registry.ServiceRegistry;
-import com.mumu.rpc.core.serializer.KryoSerializer;
 import com.mumu.rpc.core.serializer.ProtobufSerializer;
 
 /**
