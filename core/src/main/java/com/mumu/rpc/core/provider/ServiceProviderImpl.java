@@ -60,23 +60,15 @@ public class ServiceProviderImpl implements ServiceProvider {
      * @param <T>
      */
     @Override
-    public <T> void addServiceProvider(T service) {
+    public <T> void addServiceProvider(T service, Class<T> serviceClass) {
         //返回 Java 语言规范定义的底层类的规范名称
-        String serviceName = service.getClass().getCanonicalName();
+        String serviceName = serviceClass.getCanonicalName();
         //Java 集合类中的 Set.contains() 方法判断 Set 集合是否包含指定的对象。该方法返回值为 boolean 类型，如果 Set 集合包含指定的对象，则返回 true，否则返回 false。
         if(registeredService.contains(serviceName)) return;
         registeredService.add(serviceName);
         //获得service对象所实现的所有接口
-        Class<?>[] interfaces = service.getClass().getInterfaces();
-        if(interfaces.length == 0) {
-            throw new RpcException(RpcError.SERVICE_NOT_IMPLEMENT_ANY_INTERFACE);
-        }
-        for(Class<?> i : interfaces) {
-            //i.getCanonicalName()=com.mumu.rpc.api.HelloService
-            //service=HelloServiceImpl@542
-            serviceMap.put(i.getCanonicalName(), service);
-        }
-        logger.info("向接口: {} 注册服务: {}", interfaces, serviceName);
+        serviceMap.put(serviceName, service);
+        logger.info("向接口: {} 注册服务: {}", service.getClass().getInterfaces(), serviceName);
     }
 
     /**

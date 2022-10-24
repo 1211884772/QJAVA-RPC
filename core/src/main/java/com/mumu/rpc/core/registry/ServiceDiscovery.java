@@ -29,22 +29,24 @@ package com.mumu.rpc.core.registry;
 //
 
 
+
 import java.net.InetSocketAddress;
 
 /**
- * 服务注册接口
+ * 服务发现接口
  * @Auther: mumu
- * @Date: 2022-10-01 18:18
+ * @Date: 2022-10-24 16:00
  * @Description: com.mumu.rpc.core.registry
  * @version:1.0
  */
-public interface ServiceRegistry {
+public interface ServiceDiscovery {
+
     /**
-     * 将一个服务注册进注册表
+     * 根据服务名称查找服务实体
      *
      * @param serviceName 服务名称
-     * @param inetSocketAddress 提供服务的地址
+     * @return 服务实体
      */
-    void register(String serviceName, InetSocketAddress inetSocketAddress);
+    InetSocketAddress lookupService(String serviceName);
 
 }

@@ -35,7 +35,9 @@ import com.mumu.rpc.common.enumeration.ResponseCode;
 import com.mumu.rpc.common.enumeration.RpcError;
 import com.mumu.rpc.common.exception.RpcException;
 import com.mumu.rpc.common.util.RpcMessageChecker;
+import com.mumu.rpc.core.registry.NacosServiceDiscovery;
 import com.mumu.rpc.core.registry.NacosServiceRegistry;
+import com.mumu.rpc.core.registry.ServiceDiscovery;
 import com.mumu.rpc.core.registry.ServiceRegistry;
 import com.mumu.rpc.core.transport.RpcClient;
 import com.mumu.rpc.core.serializer.CommonSerializer;
@@ -59,10 +61,11 @@ public class SocketClient implements RpcClient {
 
     private static final Logger logger = LoggerFactory.getLogger(SocketClient.class);
 
-    private final ServiceRegistry serviceRegistry;
+    private final ServiceDiscovery serviceDiscovery;
+
     private CommonSerializer serializer;
-    public SocketClient() {
-        this.serviceRegistry = new NacosServiceRegistry();
+    public SocketClient(){
+        this.serviceDiscovery = new NacosServiceDiscovery();
     }
     //发送socket请求
     @Override
@@ -72,7 +75,7 @@ public class SocketClient implements RpcClient {
             throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
         }
         //创建Socket
-        InetSocketAddress inetSocketAddress = serviceRegistry.lookupService(rpcRequest.getInterfaceName());
+        InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest.getInterfaceName());
         try (Socket socket = new Socket()) {
             socket.connect(inetSocketAddress);
             //socket.getInputStream()返回此套接字的输入流。

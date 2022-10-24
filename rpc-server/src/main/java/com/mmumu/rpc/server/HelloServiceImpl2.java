@@ -1,4 +1,4 @@
-package com.mumu.rpc.core.registry;
+package com.mmumu.rpc.server;
 //
 //                       .::::.
 //                     .::::::::.
@@ -29,22 +29,24 @@ package com.mumu.rpc.core.registry;
 //
 
 
-import java.net.InetSocketAddress;
+import com.mumu.rpc.api.HelloObject;
+import com.mumu.rpc.api.HelloService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 服务注册接口
  * @Auther: mumu
- * @Date: 2022-10-01 18:18
- * @Description: com.mumu.rpc.core.registry
+ * @Date: 2022-10-24 16:10
+ * @Description: com.mmumu.rpc.server
  * @version:1.0
  */
-public interface ServiceRegistry {
-    /**
-     * 将一个服务注册进注册表
-     *
-     * @param serviceName 服务名称
-     * @param inetSocketAddress 提供服务的地址
-     */
-    void register(String serviceName, InetSocketAddress inetSocketAddress);
+public class HelloServiceImpl2 implements HelloService {
 
+    private static final Logger logger = LoggerFactory.getLogger(HelloServiceImpl2.class);
+
+    @Override
+    public String hello(HelloObject object) {
+        logger.info("接收到消息：{}", object.getMessage());
+        return "本次处理来自Socket服务";
+    }
 }

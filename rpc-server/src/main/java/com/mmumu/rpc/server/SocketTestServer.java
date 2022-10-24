@@ -44,7 +44,7 @@ import com.mumu.rpc.core.transport.socket.server.SocketServer;
 public class SocketTestServer {
 
     public static void main(String[] args) {
-        HelloService helloService = new HelloServiceImpl();
+        HelloService helloService = new HelloServiceImpl2();
 
         //默认服务注册//实例化服务端socket类
         SocketServer socketServer = new SocketServer("127.0.0.1", 9998);

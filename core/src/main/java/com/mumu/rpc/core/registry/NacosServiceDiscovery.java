@@ -29,22 +29,42 @@ package com.mumu.rpc.core.registry;
 //
 
 
+import com.alibaba.nacos.api.exception.NacosException;
+import com.alibaba.nacos.api.naming.NamingService;
+import com.alibaba.nacos.api.naming.pojo.Instance;
+import com.mumu.rpc.common.util.NacosUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.InetSocketAddress;
+import java.util.List;
 
 /**
- * 服务注册接口
  * @Auther: mumu
- * @Date: 2022-10-01 18:18
+ * @Date: 2022-10-24 15:57
  * @Description: com.mumu.rpc.core.registry
  * @version:1.0
  */
-public interface ServiceRegistry {
-    /**
-     * 将一个服务注册进注册表
-     *
-     * @param serviceName 服务名称
-     * @param inetSocketAddress 提供服务的地址
-     */
-    void register(String serviceName, InetSocketAddress inetSocketAddress);
+public class NacosServiceDiscovery implements ServiceDiscovery {
+
+    private static final Logger logger = LoggerFactory.getLogger(NacosServiceDiscovery.class);
+
+    private final NamingService namingService;
+
+    public NacosServiceDiscovery() {
+        namingService = NacosUtil.getNacosNamingService();
+    }
+
+    @Override
+    public InetSocketAddress lookupService(String serviceName) {
+        try {
+            List<Instance> instances = NacosUtil.getAllInstance(namingService, serviceName);
+            Instance instance = instances.get(0);
+            return new InetSocketAddress(instance.getIp(), instance.getPort());
+        } catch (NacosException e) {
+            logger.error("获取服务时有错误发生:", e);
+        }
+        return null;
+    }
 
 }
