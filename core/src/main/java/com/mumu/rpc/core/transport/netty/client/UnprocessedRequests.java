@@ -1,4 +1,4 @@
-package com.mumu.rpc.core.registry;
+package com.mumu.rpc.core.transport.netty.client;
 //
 //                       .::::.
 //                     .::::::::.
@@ -29,34 +29,35 @@ package com.mumu.rpc.core.registry;
 //
 
 
-import com.alibaba.nacos.api.exception.NacosException;
-import com.mumu.rpc.common.enumeration.RpcError;
-import com.mumu.rpc.common.exception.RpcException;
-import com.mumu.rpc.common.util.NacosUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.mumu.rpc.common.entity.RpcResponse;
 
-import java.net.InetSocketAddress;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Nacos服务注册中心
  * @Auther: mumu
- * @Date: 2022-10-21 18:28
- * @Description: com.mumu.rpc.core.registry
+ * @Date: 2022-10-24 18:15
+ * @Description: com.mumu.rpc.core.transport.netty.client
  * @version:1.0
  */
-public class NacosServiceRegistry implements ServiceRegistry {
+public class UnprocessedRequests {
 
-    private static final Logger logger = LoggerFactory.getLogger(NacosServiceRegistry.class);
+    private static ConcurrentHashMap<String, CompletableFuture<RpcResponse>> unprocessedResponseFutures = new ConcurrentHashMap<>();
 
+    public void put(String requestId, CompletableFuture<RpcResponse> future) {
+        unprocessedResponseFutures.put(requestId, future);
+    }
 
-    @Override
-    public void register(String serviceName, InetSocketAddress inetSocketAddress) {
-        try {
-            NacosUtil.registerService(serviceName, inetSocketAddress);
-        } catch (NacosException e) {
-            logger.error("注册服务时有错误发生:", e);
-            throw new RpcException(RpcError.REGISTER_SERVICE_FAILED);
+    public void remove(String requestId) {
+        unprocessedResponseFutures.remove(requestId);
+    }
+
+    public void complete(RpcResponse rpcResponse) {
+        CompletableFuture<RpcResponse> future = unprocessedResponseFutures.remove(rpcResponse.getRequestId());
+        if (null != future) {
+            future.complete(rpcResponse);
+        } else {
+            throw new IllegalStateException();
         }
     }
 
