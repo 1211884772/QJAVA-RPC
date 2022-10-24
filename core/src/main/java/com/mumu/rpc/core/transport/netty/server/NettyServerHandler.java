@@ -40,6 +40,7 @@ package com.mumu.rpc.core.transport.netty.server;
 import com.mumu.rpc.common.entity.RpcRequest;
 import com.mumu.rpc.common.entity.RpcResponse;
 import com.mumu.rpc.common.factory.SingletonFactory;
+import com.mumu.rpc.common.factory.ThreadPoolFactory;
 import com.mumu.rpc.core.handler.RequestHandler;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -70,7 +71,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
                 logger.info("服务器接收到请求: {}", msg);
                 Object result = requestHandler.handle(msg);
                 ChannelFuture future = ctx.writeAndFlush(RpcResponse.success(result, msg.getRequestId()));
-                future.addListener(ChannelFutureListener.CLOSE);
+                future.addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
             } finally {
                 ReferenceCountUtil.release(msg);
             }

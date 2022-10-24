@@ -43,6 +43,7 @@ import com.mumu.rpc.core.serializer.CommonSerializer;
  */
 public interface RpcClient {
 
+    int DEFAULT_SERIALIZER = CommonSerializer.KRYO_SERIALIZER;
+
     Object sendRequest(RpcRequest rpcRequest);
-    void setSerializer(CommonSerializer serializer);
 }

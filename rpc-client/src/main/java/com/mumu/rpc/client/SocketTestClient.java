@@ -31,8 +31,8 @@ package com.mumu.rpc.client;
 
 import com.mumu.rpc.api.HelloObject;
 import com.mumu.rpc.api.HelloService;
+import com.mumu.rpc.core.serializer.CommonSerializer;
 import com.mumu.rpc.core.transport.RpcClientProxy;
-import com.mumu.rpc.core.serializer.HessianSerializer;
 import com.mumu.rpc.core.transport.socket.client.SocketClient;
 
 /**
@@ -44,16 +44,14 @@ import com.mumu.rpc.core.transport.socket.client.SocketClient;
 public class SocketTestClient {
 
     public static void main(String[] args) {
-        SocketClient client = new SocketClient();
-        client.setSerializer(new HessianSerializer());
+        SocketClient client = new SocketClient(CommonSerializer.KRYO_SERIALIZER);
         RpcClientProxy proxy = new RpcClientProxy(client);
         //要代理的真实对象HelloService.class
-        HelloService proxyHelloService = proxy.getProxy(HelloService.class);
+        HelloService helloService = proxy.getProxy(HelloService.class);
         //传递的参数
         HelloObject object = new HelloObject(12, "This is a message");
-
         //代理请求服务端的helloService.hello(object)
-        String res = proxyHelloService.hello(object);
+        String res = helloService.hello(object);
         System.out.println(res);
     }
 

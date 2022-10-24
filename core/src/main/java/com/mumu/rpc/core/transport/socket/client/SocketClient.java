@@ -63,9 +63,14 @@ public class SocketClient implements RpcClient {
 
     private final ServiceDiscovery serviceDiscovery;
 
-    private CommonSerializer serializer;
-    public SocketClient(){
+    private final CommonSerializer serializer;
+
+    public SocketClient() {
+        this(DEFAULT_SERIALIZER);
+    }
+    public SocketClient(Integer serializer) {
         this.serviceDiscovery = new NacosServiceDiscovery();
+        this.serializer = CommonSerializer.getByCode(serializer);
     }
     //发送socket请求
     @Override
@@ -103,8 +108,5 @@ public class SocketClient implements RpcClient {
             throw new RpcException("服务调用失败: ", e);
         }
     }
-    @Override
-    public void setSerializer(CommonSerializer serializer) {
-        this.serializer = serializer;
-    }
+
 }

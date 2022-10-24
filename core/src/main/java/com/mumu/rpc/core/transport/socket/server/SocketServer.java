@@ -31,6 +31,7 @@ package com.mumu.rpc.core.transport.socket.server;
 
 import com.mumu.rpc.common.enumeration.RpcError;
 import com.mumu.rpc.common.exception.RpcException;
+import com.mumu.rpc.common.factory.ThreadPoolFactory;
 import com.mumu.rpc.core.handler.RequestHandler;
 import com.mumu.rpc.core.hook.ShutdownHook;
 import com.mumu.rpc.core.provider.ServiceProvider;
@@ -61,19 +62,23 @@ public class SocketServer implements RpcServer {
     private final ExecutorService threadPool;//线程池
     private final String host;
     private final int port;
-    private CommonSerializer serializer;
-    private RequestHandler requestHandler = new RequestHandler();//请求助手
+    private final CommonSerializer serializer;
+    private final RequestHandler requestHandler = new RequestHandler();//请求助手
     //TimeUnit.SECONDS 时间单位
 
     private final ServiceRegistry serviceRegistry;
     private final ServiceProvider serviceProvider;
 
     public SocketServer(String host, int port) {
+        this(host, port, DEFAULT_SERIALIZER);
+    }
+    public SocketServer(String host, int port, Integer serializer) {
         this.host = host;
         this.port = port;
         threadPool = ThreadPoolFactory.createDefaultThreadPool("socket-rpc-server");
         this.serviceRegistry = new NacosServiceRegistry();
         this.serviceProvider = new ServiceProviderImpl();
+        this.serializer = CommonSerializer.getByCode(serializer);
     }
 
     @Override
@@ -110,9 +115,5 @@ public class SocketServer implements RpcServer {
         }
     }
 
-    @Override
-    public void setSerializer(CommonSerializer serializer) {
-        this.serializer = serializer;
-    }
 
 }

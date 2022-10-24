@@ -30,10 +30,8 @@ package com.mmumu.rpc.server;
 
 
 import com.mumu.rpc.api.HelloService;
+import com.mumu.rpc.core.serializer.CommonSerializer;
 import com.mumu.rpc.core.transport.netty.server.NettyServer;
-import com.mumu.rpc.core.registry.DefaultServiceRegistry;
-import com.mumu.rpc.core.registry.ServiceRegistry;
-import com.mumu.rpc.core.serializer.ProtobufSerializer;
 
 /**
  * 测试用Netty服务提供者（服务端）
@@ -45,8 +43,7 @@ import com.mumu.rpc.core.serializer.ProtobufSerializer;
 public class NettyTestServer {
     public static void main(String[] args) {
         HelloService helloService = new HelloServiceImpl();
-        NettyServer server = new NettyServer("127.0.0.1", 9999);
-        server.setSerializer(new ProtobufSerializer());
+        NettyServer server = new NettyServer("127.0.0.1", 9999, CommonSerializer.PROTOBUF_SERIALIZER);
         server.publishService(helloService, HelloService.class);
     }
 }

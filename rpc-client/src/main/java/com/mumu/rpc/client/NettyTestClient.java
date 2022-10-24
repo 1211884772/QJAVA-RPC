@@ -31,10 +31,11 @@ package com.mumu.rpc.client;
 
 import com.mumu.rpc.api.HelloObject;
 import com.mumu.rpc.api.HelloService;
+import com.mumu.rpc.core.serializer.CommonSerializer;
 import com.mumu.rpc.core.transport.RpcClient;
 import com.mumu.rpc.core.transport.RpcClientProxy;
 import com.mumu.rpc.core.transport.netty.client.NettyClient;
-import com.mumu.rpc.core.serializer.ProtobufSerializer;
+
 
 /**
  * 测试用Netty消费者
@@ -45,8 +46,7 @@ import com.mumu.rpc.core.serializer.ProtobufSerializer;
  */
 public class NettyTestClient {
     public static void main(String[] args) {
-        RpcClient client = new NettyClient();
-        client.setSerializer(new ProtobufSerializer());
+        RpcClient client = new NettyClient(CommonSerializer.PROTOBUF_SERIALIZER);
         RpcClientProxy rpcClientProxy = new RpcClientProxy(client);
         HelloService helloService = rpcClientProxy.getProxy(HelloService.class);
         HelloObject object = new HelloObject(12, "This is a message");

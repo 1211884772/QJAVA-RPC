@@ -30,9 +30,7 @@ package com.mmumu.rpc.server;
 
 
 import com.mumu.rpc.api.HelloService;
-import com.mumu.rpc.core.registry.DefaultServiceRegistry;
-import com.mumu.rpc.core.registry.ServiceRegistry;
-import com.mumu.rpc.core.serializer.HessianSerializer;
+import com.mumu.rpc.core.serializer.CommonSerializer;
 import com.mumu.rpc.core.transport.socket.server.SocketServer;
 
 /**
@@ -45,11 +43,8 @@ public class SocketTestServer {
 
     public static void main(String[] args) {
         HelloService helloService = new HelloServiceImpl2();
-
-        //默认服务注册//实例化服务端socket类
-        SocketServer socketServer = new SocketServer("127.0.0.1", 9998);
-        //注册helloService服务
-        socketServer.setSerializer(new HessianSerializer());
+        //默认服务注册//实例化服务端socket类//注册helloService服务
+        SocketServer socketServer = new SocketServer("127.0.0.1", 9998, CommonSerializer.HESSIAN_SERIALIZER);
         socketServer.publishService(helloService, HelloService.class);
     }
 
