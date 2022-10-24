@@ -35,6 +35,8 @@ import com.mumu.rpc.common.enumeration.ResponseCode;
 import com.mumu.rpc.common.enumeration.RpcError;
 import com.mumu.rpc.common.exception.RpcException;
 import com.mumu.rpc.common.util.RpcMessageChecker;
+import com.mumu.rpc.core.loadbalancer.LoadBalancer;
+import com.mumu.rpc.core.loadbalancer.RandomLoadBalancer;
 import com.mumu.rpc.core.registry.NacosServiceDiscovery;
 import com.mumu.rpc.core.registry.NacosServiceRegistry;
 import com.mumu.rpc.core.registry.ServiceDiscovery;
@@ -66,10 +68,17 @@ public class SocketClient implements RpcClient {
     private final CommonSerializer serializer;
 
     public SocketClient() {
-        this(DEFAULT_SERIALIZER);
+        this(DEFAULT_SERIALIZER, new RandomLoadBalancer());
+    }
+    public SocketClient(LoadBalancer loadBalancer) {
+        this(DEFAULT_SERIALIZER, loadBalancer);
     }
     public SocketClient(Integer serializer) {
-        this.serviceDiscovery = new NacosServiceDiscovery();
+        this(serializer, new RandomLoadBalancer());
+    }
+
+    public SocketClient(Integer serializer, LoadBalancer loadBalancer) {
+        this.serviceDiscovery = new NacosServiceDiscovery(loadBalancer);
         this.serializer = CommonSerializer.getByCode(serializer);
     }
     //发送socket请求

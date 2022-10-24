@@ -51,8 +51,10 @@ public class SocketTestClient {
         //传递的参数
         HelloObject object = new HelloObject(12, "This is a message");
         //代理请求服务端的helloService.hello(object)
-        String res = helloService.hello(object);
-        System.out.println(res);
+        for(int i = 0; i < 20; i ++) {
+            String res = helloService.hello(object);
+            System.out.println(res);
+        }
     }
 
 }

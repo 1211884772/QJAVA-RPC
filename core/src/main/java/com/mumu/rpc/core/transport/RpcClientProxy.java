@@ -31,6 +31,7 @@ package com.mumu.rpc.core.transport;
 
 import com.mumu.rpc.common.entity.RpcRequest;
 import com.mumu.rpc.common.entity.RpcResponse;
+import com.mumu.rpc.common.util.RpcMessageChecker;
 import com.mumu.rpc.core.transport.netty.client.NettyClient;
 import com.mumu.rpc.core.transport.socket.client.SocketClient;
 import org.slf4j.Logger;
@@ -81,20 +82,20 @@ public class RpcClientProxy implements InvocationHandler {
                 args,
                 method.getParameterTypes(),
                 false);
-        Object result = null;
+        RpcResponse rpcResponse = null;
         if (client instanceof NettyClient) {
             CompletableFuture<RpcResponse> completableFuture = (CompletableFuture<RpcResponse>) client.sendRequest(rpcRequest);
             try {
-                result = completableFuture.get().getData();
+                rpcResponse = completableFuture.get();
             } catch (InterruptedException | ExecutionException e) {
                 logger.error("方法调用请求发送失败", e);
                 return null;
             }
         }
         if (client instanceof SocketClient) {
-            RpcResponse rpcResponse = (RpcResponse) client.sendRequest(rpcRequest);
-            result = rpcResponse.getData();
+            rpcResponse = (RpcResponse) client.sendRequest(rpcRequest);
         }
-        return result;
+        RpcMessageChecker.check(rpcRequest, rpcResponse);
+        return rpcResponse.getData();
     }
 }

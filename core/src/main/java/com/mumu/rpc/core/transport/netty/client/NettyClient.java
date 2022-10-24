@@ -35,6 +35,8 @@ import com.mumu.rpc.common.enumeration.RpcError;
 import com.mumu.rpc.common.exception.RpcException;
 import com.mumu.rpc.common.factory.SingletonFactory;
 
+import com.mumu.rpc.core.loadbalancer.LoadBalancer;
+import com.mumu.rpc.core.loadbalancer.RandomLoadBalancer;
 import com.mumu.rpc.core.registry.NacosServiceDiscovery;
 import com.mumu.rpc.core.registry.ServiceDiscovery;
 import com.mumu.rpc.core.transport.RpcClient;
@@ -75,14 +77,19 @@ public class NettyClient implements RpcClient {
     private final UnprocessedRequests unprocessedRequests;
 
     public NettyClient() {
-        this(DEFAULT_SERIALIZER);
+        this(DEFAULT_SERIALIZER, new RandomLoadBalancer());
+    }
+    public NettyClient(LoadBalancer loadBalancer) {
+        this(DEFAULT_SERIALIZER, loadBalancer);
     }
     public NettyClient(Integer serializer) {
-        this.serviceDiscovery = new NacosServiceDiscovery();
+        this(serializer, new RandomLoadBalancer());
+    }
+    public NettyClient(Integer serializer, LoadBalancer loadBalancer) {
+        this.serviceDiscovery = new NacosServiceDiscovery(loadBalancer);
         this.serializer = CommonSerializer.getByCode(serializer);
         this.unprocessedRequests = SingletonFactory.getInstance(UnprocessedRequests.class);
     }
-
     @Override
     public CompletableFuture<RpcResponse> sendRequest(RpcRequest rpcRequest) {
         if (serializer == null) {
