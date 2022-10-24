@@ -57,30 +57,24 @@ public class RequestHandler {
     }
 
     public Object handle(RpcRequest rpcRequest) {
-        Object result = null;
         Object service = serviceProvider.getServiceProvider(rpcRequest.getInterfaceName());
-        try {
-            //代理调用方法
-            result = invokeTargetMethod(rpcRequest, service);
-            logger.info("服务:{} 成功调用方法:{}", rpcRequest.getInterfaceName(), rpcRequest.getMethodName());
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            logger.error("调用或发送时有错误发生：", e);
-        }
-        return result;
+        return invokeTargetMethod(rpcRequest, service);
     }
 
 
     //代理调用方法
-    private Object invokeTargetMethod(RpcRequest rpcRequest, Object service) throws IllegalAccessException, InvocationTargetException {
-        Method method;
+    private Object invokeTargetMethod(RpcRequest rpcRequest, Object service) {
+        Object result;
         try {
             //getClass 返回此 Object的运行时类
             //getMethod 返回一个 方法对象，它反映此表示的类或接口的指定公共成员方法 类对象。
-            method = service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParamTypes());
-        } catch (NoSuchMethodException e) {
+            Method method = service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParamTypes());
+            result = method.invoke(service, rpcRequest.getParameters());
+            logger.info("服务:{} 成功调用方法:{}", rpcRequest.getInterfaceName(), rpcRequest.getMethodName());
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             return RpcResponse.fail(ResponseCode.METHOD_NOT_FOUND, rpcRequest.getRequestId());
         }
         //invoke JAX-WS运行时调用此方法来对端点实例执行实际的Web服务调用。
-        return method.invoke(service, rpcRequest.getParameters());
+        return result;
     }
 }

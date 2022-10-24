@@ -1,4 +1,4 @@
-package com.mumu.rpc.core.registry;
+package com.mumu.rpc.common.factory;
 //
 //                       .::::.
 //                     .::::::::.
@@ -29,38 +29,35 @@ package com.mumu.rpc.core.registry;
 //
 
 
-import com.alibaba.nacos.api.exception.NacosException;
-import com.alibaba.nacos.api.naming.NamingService;
-import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.mumu.rpc.common.util.NacosUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.net.InetSocketAddress;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
+ * 单例工厂
  * @Auther: mumu
- * @Date: 2022-10-24 15:57
- * @Description: com.mumu.rpc.core.registry
+ * @Date: 2022-10-24 16:16
+ * @Description: com.mumu.rpc.common.factory
  * @version:1.0
  */
-public class NacosServiceDiscovery implements ServiceDiscovery {
+public class SingletonFactory {
 
-    private static final Logger logger = LoggerFactory.getLogger(NacosServiceDiscovery.class);
+    private static Map<Class, Object> objectMap = new HashMap<>();
 
+    private SingletonFactory() {}
 
-
-    @Override
-    public InetSocketAddress lookupService(String serviceName) {
-        try {
-            List<Instance> instances = NacosUtil.getAllInstance(serviceName);
-            Instance instance = instances.get(0);
-            return new InetSocketAddress(instance.getIp(), instance.getPort());
-        } catch (NacosException e) {
-            logger.error("获取服务时有错误发生:", e);
+    public static <T> T getInstance(Class<T> clazz) {
+        Object instance = objectMap.get(clazz);
+        synchronized (clazz) {
+            if(instance == null) {
+                try {
+                    instance = clazz.newInstance();
+                    objectMap.put(clazz, instance);
+                } catch (IllegalAccessException | InstantiationException e) {
+                    throw new RuntimeException(e.getMessage(), e);
+                }
+            }
         }
-        return null;
+        return clazz.cast(instance);
     }
 
 }

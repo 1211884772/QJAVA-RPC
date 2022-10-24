@@ -1,4 +1,4 @@
-package com.mumu.rpc.core.registry;
+package com.mumu.rpc.core.hook;
 //
 //                       .::::.
 //                     .::::::::.
@@ -29,39 +29,36 @@ package com.mumu.rpc.core.registry;
 //
 
 
-import com.alibaba.nacos.api.exception.NacosException;
-import com.alibaba.nacos.api.naming.NamingFactory;
-import com.alibaba.nacos.api.naming.NamingService;
-import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.mumu.rpc.common.enumeration.RpcError;
-import com.mumu.rpc.common.exception.RpcException;
+import com.mumu.rpc.common.factory.ThreadPoolFactory;
 import com.mumu.rpc.common.util.NacosUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
-import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 /**
- * Nacos服务注册中心
  * @Auther: mumu
- * @Date: 2022-10-21 18:28
- * @Description: com.mumu.rpc.core.registry
+ * @Date: 2022-10-24 16:24
+ * @Description: com.mumu.rpc.core.hook
  * @version:1.0
  */
-public class NacosServiceRegistry implements ServiceRegistry {
+public class ShutdownHook {
 
-    private static final Logger logger = LoggerFactory.getLogger(NacosServiceRegistry.class);
+    private static final Logger logger = LoggerFactory.getLogger(ShutdownHook.class);
 
+    private final ExecutorService threadPool = ThreadPoolFactory.createDefaultThreadPool("shutdown-hook");
+    private static final ShutdownHook shutdownHook = new ShutdownHook();
 
-    @Override
-    public void register(String serviceName, InetSocketAddress inetSocketAddress) {
-        try {
-            NacosUtil.registerService(serviceName, inetSocketAddress);
-        } catch (NacosException e) {
-            logger.error("注册服务时有错误发生:", e);
-            throw new RpcException(RpcError.REGISTER_SERVICE_FAILED);
-        }
+    public static ShutdownHook getShutdownHook() {
+        return shutdownHook;
+    }
+
+    public void addClearAllHook() {
+        logger.info("关闭后将自动注销所有服务");
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            NacosUtil.clearRegistry();
+            threadPool.shutdown();
+        }));
     }
 
 }

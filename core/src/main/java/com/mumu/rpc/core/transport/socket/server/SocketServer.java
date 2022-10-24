@@ -31,8 +31,8 @@ package com.mumu.rpc.core.transport.socket.server;
 
 import com.mumu.rpc.common.enumeration.RpcError;
 import com.mumu.rpc.common.exception.RpcException;
-import com.mumu.rpc.common.util.ThreadPoolFactory;
 import com.mumu.rpc.core.handler.RequestHandler;
+import com.mumu.rpc.core.hook.ShutdownHook;
 import com.mumu.rpc.core.provider.ServiceProvider;
 import com.mumu.rpc.core.provider.ServiceProviderImpl;
 import com.mumu.rpc.core.registry.NacosServiceRegistry;
@@ -90,8 +90,10 @@ public class SocketServer implements RpcServer {
     @Override
     public void start() {
         //创建一个具有指定端口的服务器，侦听backlog和本地IP地址绑定
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
+        try (ServerSocket serverSocket = new ServerSocket()) {
+            serverSocket.bind(new InetSocketAddress(host, port));
             logger.info("服务器启动……");
+            ShutdownHook.getShutdownHook().addClearAllHook();
             Socket socket;
             //侦听要连接到此套接字并接受它。
             while((socket = serverSocket.accept()) != null) {
@@ -99,7 +101,7 @@ public class SocketServer implements RpcServer {
                 logger.info("消费者连接: {}:{}", socket.getInetAddress(), socket.getPort());
                 //在将来某个时候执行给定的任务。
                 //注册serviceRegistry=helloService服务
-                threadPool.execute(new RequestHandlerThread(socket, requestHandler, serviceRegistry, serializer));
+                threadPool.execute(new SocketRequestHandlerThread(socket, requestHandler, serializer));
             }
             //线程池关闭
             threadPool.shutdown();

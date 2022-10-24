@@ -1,4 +1,4 @@
-package com.mumu.rpc.common.util;
+package com.mumu.rpc.common.factory;
 //
 //                       .::::.
 //                     .::::::::.

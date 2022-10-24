@@ -51,18 +51,16 @@ import java.net.Socket;
  * @Description: com.mumu.rpc.core.socket.server
  * @version:1.0
  */
-public class RequestHandlerThread implements Runnable {
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandlerThread.class);
+public class SocketRequestHandlerThread implements Runnable {
+    private static final Logger logger = LoggerFactory.getLogger(SocketRequestHandlerThread.class);
 
     private Socket socket;
     private RequestHandler requestHandler;
-    private ServiceRegistry serviceRegistry;
     private CommonSerializer serializer;
 
-    public RequestHandlerThread(Socket socket, RequestHandler requestHandler, ServiceRegistry serviceRegistry, CommonSerializer serializer) {
+    public SocketRequestHandlerThread(Socket socket, RequestHandler requestHandler,CommonSerializer serializer) {
         this.socket = socket;
         this.requestHandler = requestHandler;
-        this.serviceRegistry = serviceRegistry;
         this.serializer = serializer;
     }
 
@@ -74,7 +72,6 @@ public class RequestHandlerThread implements Runnable {
              OutputStream outputStream = socket.getOutputStream()) {
             //readObject 从ObjectInputStream读取一个对象。
             RpcRequest rpcRequest = (RpcRequest) ObjectReader.readObject(inputStream);
-            String interfaceName = rpcRequest.getInterfaceName();
             Object result = requestHandler.handle(rpcRequest);
 
             RpcResponse<Object> response = RpcResponse.success(result, rpcRequest.getRequestId());

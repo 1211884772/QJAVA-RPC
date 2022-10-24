@@ -31,6 +31,7 @@ package com.mumu.rpc.core.transport.netty.server;
 
 import com.mumu.rpc.common.enumeration.RpcError;
 import com.mumu.rpc.common.exception.RpcException;
+import com.mumu.rpc.core.hook.ShutdownHook;
 import com.mumu.rpc.core.provider.ServiceProvider;
 import com.mumu.rpc.core.provider.ServiceProviderImpl;
 import com.mumu.rpc.core.registry.NacosServiceRegistry;
@@ -110,6 +111,7 @@ public class NettyServer implements RpcServer {
                         }
                     });
             ChannelFuture future = serverBootstrap.bind(host, port).sync();
+            ShutdownHook.getShutdownHook().addClearAllHook();
             future.channel().closeFuture().sync();
 
         } catch (InterruptedException e) {
