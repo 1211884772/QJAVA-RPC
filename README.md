@@ -4,7 +4,7 @@ My-RPC-Framework 是一款基于 Nacos 实现的 RPC 框架。网络传输实现
 
 ## 架构
 
-![系统架构](./images/architecture.png)
+![系统架构](./remark/architecture.png)
 
 消费者调用提供者的方式取决于消费者的客户端选择，如选用原生 Socket 则该步调用使用 BIO，如选用 Netty 方式则该步调用使用 NIO。如该调用有返回值，则提供者向消费者发送返回值的方式同理。
 
@@ -54,44 +54,168 @@ My-RPC-Framework 是一款基于 Nacos 实现的 RPC 框架。网络传输实现
 ### 定义调用接口
 
 ```java
-package top.guoziyang.rpc.api;
+package com.mumu.rpc.api;
+//
+//                       .::::.
+//                     .::::::::.
+//                    :::::::::::
+//                 ..:::::::::::'
+//              '::::::::::::'
+//                .::::::::::
+//           '::::::::::::::..
+//                ..::::::::::::.
+//              ``::::::::::::::::
+//               ::::``:::::::::'        .:::.
+//              ::::'   ':::::'       .::::::::.
+//            .::::'      ::::     .:::::::'::::.
+//           .:::'       :::::  .:::::::::' ':::::.
+//          .::'        :::::.:::::::::'      ':::::.
+//         .::'         ::::::::::::::'         ``::::.
+//     ...:::           ::::::::::::'              ``::.
+//    ```` ':.          ':::::::::'                  ::::..
+//                       '.:::::'                    ':'````..
+//
+//
+//
+//                  年少太轻狂，误入码农行。
+//                  白发森森立，两眼直茫茫。
+//                  语言数十种，无一称擅长。
+//                  三十而立时，无房单身郎。
+//
+//
 
+
+/**
+ * 测试用api的接口
+ * @Auther: mumu
+ * @Date: 2022-09-14 18:59
+ * @Description: com.mumu.rpc.api
+ * @version:1.0
+ */
 public interface HelloService {
-    String hello(String name);
+
+    String hello(HelloObject object);
+
 }
 ```
 
 ### 在服务提供侧实现该接口
 
 ```java
-package top.guoziyang.test;
 
-import top.guoziyang.rpc.api.HelloService;
+package com.mmumu.rpc.server;
+//
+//                       .::::.
+//                     .::::::::.
+//                    :::::::::::
+//                 ..:::::::::::'
+//              '::::::::::::'
+//                .::::::::::
+//           '::::::::::::::..
+//                ..::::::::::::.
+//              ``::::::::::::::::
+//               ::::``:::::::::'        .:::.
+//              ::::'   ':::::'       .::::::::.
+//            .::::'      ::::     .:::::::'::::.
+//           .:::'       :::::  .:::::::::' ':::::.
+//          .::'        :::::.:::::::::'      ':::::.
+//         .::'         ::::::::::::::'         ``::::.
+//     ...:::           ::::::::::::'              ``::.
+//    ```` ':.          ':::::::::'                  ::::..
+//                       '.:::::'                    ':'````..
+//
+//
+//
+//                  年少太轻狂，误入码农行。
+//                  白发森森立，两眼直茫茫。
+//                  语言数十种，无一称擅长。
+//                  三十而立时，无房单身郎。
+//
+//
 
+
+import com.mumu.rpc.api.HelloObject;
+import com.mumu.rpc.api.HelloService;
+import com.mumu.rpc.core.annotation.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * HelloServer服务实现
+ * @Auther: mumu
+ * @Date: 2022-09-14 19:06
+ * @Description: com.mmumu.rpc.server.impl
+ * @version:1.0
+ */
 @Service
 public class HelloServiceImpl implements HelloService {
+
+    private static final Logger logger = LoggerFactory.getLogger(HelloServiceImpl.class);
+
     @Override
-    public String hello(String name) {
-        return "Hello, " + name;
+    public String hello(HelloObject object) {
+        logger.info("接收到消息：{}", object.getMessage());
+        return "这是Impl1方法";
     }
+
 }
 ```
 
 ### 编写服务提供者
 
 ```java
-package top.guoziyang.test;
+package com.mmumu.rpc.server;
+//
+//                       .::::.
+//                     .::::::::.
+//                    :::::::::::
+//                 ..:::::::::::'
+//              '::::::::::::'
+//                .::::::::::
+//           '::::::::::::::..
+//                ..::::::::::::.
+//              ``::::::::::::::::
+//               ::::``:::::::::'        .:::.
+//              ::::'   ':::::'       .::::::::.
+//            .::::'      ::::     .:::::::'::::.
+//           .:::'       :::::  .:::::::::' ':::::.
+//          .::'        :::::.:::::::::'      ':::::.
+//         .::'         ::::::::::::::'         ``::::.
+//     ...:::           ::::::::::::'              ``::.
+//    ```` ':.          ':::::::::'                  ::::..
+//                       '.:::::'                    ':'````..
+//
+//
+//
+//                  年少太轻狂，误入码农行。
+//                  白发森森立，两眼直茫茫。
+//                  语言数十种，无一称擅长。
+//                  三十而立时，无房单身郎。
+//
+//
 
-import top.guoziyang.rpc.api.HelloService;
-import top.guoziyang.rpc.serializer.CommonSerializer;
-import top.guoziyang.rpc.transport.netty.server.NettyServer;
 
+
+import com.mumu.rpc.core.annotation.ServiceScan;
+import com.mumu.rpc.core.serializer.CommonSerializer;
+import com.mumu.rpc.core.transport.RpcServer;
+import com.mumu.rpc.core.transport.netty.server.NettyServer;
+
+/**
+ * 测试用Netty服务提供者（服务端）
+ * @Auther: mumu
+ * @Date: 2022-10-21 12:19
+ * @Description: com.mmumu.rpc.server
+ * @version:1.0
+ */
 @ServiceScan
 public class NettyTestServer {
+
     public static void main(String[] args) {
-        NettyServer server = new NettyServer("127.0.0.1", 9999, CommonSerializer.PROTOBUF_SERIALIZER);
+        RpcServer server = new NettyServer("127.0.0.1", 9999, CommonSerializer.PROTOBUF_SERIALIZER);
         server.start();
     }
+
 }
 ```
 
@@ -100,22 +224,64 @@ public class NettyTestServer {
 ### 在服务消费侧远程调用
 
 ```java
-package top.guoziyang.test;
+package com.mumu.rpc.client;
+//
+//                       .::::.
+//                     .::::::::.
+//                    :::::::::::
+//                 ..:::::::::::'
+//              '::::::::::::'
+//                .::::::::::
+//           '::::::::::::::..
+//                ..::::::::::::.
+//              ``::::::::::::::::
+//               ::::``:::::::::'        .:::.
+//              ::::'   ':::::'       .::::::::.
+//            .::::'      ::::     .:::::::'::::.
+//           .:::'       :::::  .:::::::::' ':::::.
+//          .::'        :::::.:::::::::'      ':::::.
+//         .::'         ::::::::::::::'         ``::::.
+//     ...:::           ::::::::::::'              ``::.
+//    ```` ':.          ':::::::::'                  ::::..
+//                       '.:::::'                    ':'````..
+//
+//
+//
+//                  年少太轻狂，误入码农行。
+//                  白发森森立，两眼直茫茫。
+//                  语言数十种，无一称擅长。
+//                  三十而立时，无房单身郎。
+//
+//
 
-import top.guoziyang.rpc.api.HelloService;
-import top.guoziyang.rpc.serializer.CommonSerializer;
-import top.guoziyang.rpc.transport.RpcClient;
-import top.guoziyang.rpc.transport.RpcClientProxy;
-import top.guoziyang.rpc.transport.netty.client.NettyClient;
 
+import com.mumu.rpc.api.ByeService;
+import com.mumu.rpc.api.HelloObject;
+import com.mumu.rpc.api.HelloService;
+import com.mumu.rpc.core.serializer.CommonSerializer;
+import com.mumu.rpc.core.transport.RpcClient;
+import com.mumu.rpc.core.transport.RpcClientProxy;
+import com.mumu.rpc.core.transport.netty.client.NettyClient;
+
+
+/**
+ * 测试用Netty消费者
+ * @Auther: mumu
+ * @Date: 2022-10-21 12:08
+ * @Description: com.mumu.rpc.client
+ * @version:1.0
+ */
 public class NettyTestClient {
-
     public static void main(String[] args) {
-        RpcClient client = new NettyClient(CommonSerializer.KRYO_SERIALIZER, new RoundRobinLoadBalancer());
+        RpcClient client = new NettyClient(CommonSerializer.PROTOBUF_SERIALIZER);
         RpcClientProxy rpcClientProxy = new RpcClientProxy(client);
         HelloService helloService = rpcClientProxy.getProxy(HelloService.class);
-        String res = helloService.hello("ziyang");
+        HelloObject object = new HelloObject(12, "This is a message");
+        String res = helloService.hello(object);
         System.out.println(res);
+        ByeService byeService = rpcClientProxy.getProxy(ByeService.class);
+        System.out.println(byeService.bye("Netty"));
+
     }
 }
 ```
