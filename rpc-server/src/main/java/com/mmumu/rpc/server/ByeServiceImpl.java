@@ -29,24 +29,20 @@ package com.mmumu.rpc.server;
 //
 
 
-import com.mumu.rpc.api.HelloObject;
-import com.mumu.rpc.api.HelloService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.mumu.rpc.api.ByeService;
+import com.mumu.rpc.core.annotation.Service;
 
 /**
  * @Auther: mumu
- * @Date: 2022-10-24 16:10
+ * @Date: 2022-10-31 16:34
  * @Description: com.mmumu.rpc.server
  * @version:1.0
  */
-public class HelloServiceImpl2 implements HelloService {
-
-    private static final Logger logger = LoggerFactory.getLogger(HelloServiceImpl2.class);
+@Service
+public class ByeServiceImpl implements ByeService {
 
     @Override
-    public String hello(HelloObject object) {
-        logger.info("接收到消息：{}", object.getMessage());
-        return "本次处理来自Socket服务";
+    public String bye(String name) {
+        return "bye, " + name;
     }
 }

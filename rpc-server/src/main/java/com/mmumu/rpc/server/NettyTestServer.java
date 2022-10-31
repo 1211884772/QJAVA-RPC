@@ -29,8 +29,10 @@ package com.mmumu.rpc.server;
 //
 
 
-import com.mumu.rpc.api.HelloService;
+
+import com.mumu.rpc.core.annotation.ServiceScan;
 import com.mumu.rpc.core.serializer.CommonSerializer;
+import com.mumu.rpc.core.transport.RpcServer;
 import com.mumu.rpc.core.transport.netty.server.NettyServer;
 
 /**
@@ -40,10 +42,12 @@ import com.mumu.rpc.core.transport.netty.server.NettyServer;
  * @Description: com.mmumu.rpc.server
  * @version:1.0
  */
+@ServiceScan
 public class NettyTestServer {
+
     public static void main(String[] args) {
-        HelloService helloService = new HelloServiceImpl();
-        NettyServer server = new NettyServer("127.0.0.1", 9999, CommonSerializer.PROTOBUF_SERIALIZER);
-        server.publishService(helloService, HelloService.class);
+        RpcServer server = new NettyServer("127.0.0.1", 9999, CommonSerializer.PROTOBUF_SERIALIZER);
+        server.start();
     }
+
 }

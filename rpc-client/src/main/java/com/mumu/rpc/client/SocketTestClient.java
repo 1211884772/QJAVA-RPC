@@ -29,6 +29,7 @@ package com.mumu.rpc.client;
 //
 
 
+import com.mumu.rpc.api.ByeService;
 import com.mumu.rpc.api.HelloObject;
 import com.mumu.rpc.api.HelloService;
 import com.mumu.rpc.core.serializer.CommonSerializer;
@@ -46,15 +47,12 @@ public class SocketTestClient {
     public static void main(String[] args) {
         SocketClient client = new SocketClient(CommonSerializer.KRYO_SERIALIZER);
         RpcClientProxy proxy = new RpcClientProxy(client);
-        //要代理的真实对象HelloService.class
         HelloService helloService = proxy.getProxy(HelloService.class);
-        //传递的参数
         HelloObject object = new HelloObject(12, "This is a message");
-        //代理请求服务端的helloService.hello(object)
-        for(int i = 0; i < 20; i ++) {
-            String res = helloService.hello(object);
-            System.out.println(res);
-        }
+        String res = helloService.hello(object);
+        System.out.println(res);
+        ByeService byeService = proxy.getProxy(ByeService.class);
+        System.out.println(byeService.bye("Netty"));
     }
 
 }

@@ -31,6 +31,7 @@ package com.mmumu.rpc.server;
 
 import com.mumu.rpc.api.HelloObject;
 import com.mumu.rpc.api.HelloService;
+import com.mumu.rpc.core.annotation.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +42,7 @@ import org.slf4j.LoggerFactory;
  * @Description: com.mmumu.rpc.server.impl
  * @version:1.0
  */
+@Service
 public class HelloServiceImpl implements HelloService {
 
     private static final Logger logger = LoggerFactory.getLogger(HelloServiceImpl.class);
@@ -48,7 +50,7 @@ public class HelloServiceImpl implements HelloService {
     @Override
     public String hello(HelloObject object) {
         logger.info("接收到消息：{}", object.getMessage());
-        return "本次处理来自Netty服务";
+        return "这是Impl1方法";
     }
 
 }

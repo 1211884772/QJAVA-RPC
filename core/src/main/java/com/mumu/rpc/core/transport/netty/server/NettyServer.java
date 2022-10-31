@@ -36,6 +36,7 @@ import com.mumu.rpc.core.provider.ServiceProvider;
 import com.mumu.rpc.core.provider.ServiceProviderImpl;
 import com.mumu.rpc.core.registry.NacosServiceRegistry;
 import com.mumu.rpc.core.registry.ServiceRegistry;
+import com.mumu.rpc.core.transport.AbstractRpcServer;
 import com.mumu.rpc.core.transport.RpcServer;
 import com.mumu.rpc.core.codec.CommonDecoder;
 import com.mumu.rpc.core.codec.CommonEncoder;
@@ -61,13 +62,8 @@ import java.util.concurrent.TimeUnit;
  * @Description: com.mumu.rpc.core.netty.server
  * @version:1.0
  */
-public class NettyServer implements RpcServer {
-    private static final Logger logger = LoggerFactory.getLogger(NettyServer.class);
-    private final String host;
-    private final int port;
+public class NettyServer extends AbstractRpcServer {
 
-    private final ServiceRegistry serviceRegistry;
-    private final ServiceProvider serviceProvider;
     private final CommonSerializer serializer;
 
     public NettyServer(String host, int port) {
@@ -80,17 +76,7 @@ public class NettyServer implements RpcServer {
         serviceRegistry = new NacosServiceRegistry();
         serviceProvider = new ServiceProviderImpl();
         this.serializer = CommonSerializer.getByCode(serializer);
-    }
-    @Override
-    public <T> void publishService(T service, Class<T> serviceClass) {
-
-        if(serializer == null) {
-            logger.error("未设置序列化器");
-            throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
-        }
-        serviceProvider.addServiceProvider(service, serviceClass);
-        serviceRegistry.register(serviceClass.getCanonicalName(), new InetSocketAddress(host, port));
-        start();
+        scanServices();
     }
 
     @Override
